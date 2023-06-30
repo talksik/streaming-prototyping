@@ -1,20 +1,23 @@
 use livekit::prelude::*;
-use std::env;
 
 // Connect to a room using the specified env variables
 // and print all incoming events
 
 #[tokio::main]
 async fn main() {
-    env_logger::init();
+    // run livekit-server locally: livekit-server --dev
+    let url = "ws://localhost:7880";
+    // run livekit-cli command:
+        // livekit-cli create-token \
+        // --api-key devkey --api-secret secret \
+        // --join --room my-first-room --identity user1 \
+        // --valid-for 24h
+    let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODgyNDk3NzEsImlzcyI6ImRldmtleSIsIm5hbWUiOiJ1c2VyMSIsIm5iZiI6MTY4ODE2MzM3MSwic3ViIjoidXNlcjEiLCJ2aWRlbyI6eyJyb29tIjoibXktZmlyc3Qtcm9vbSIsInJvb21Kb2luIjp0cnVlfX0.HLDtRZbgca9UTVjV0d8Ms1ukv_eCH11AoCqyN_fyt88";
 
-    let url = env::var("0.0.0.0:7880").expect("LIVEKIT_URL is not set");
-    let token = env::var("LIVEKIT_TOKEN").expect("LIVEKIT_TOKEN is not set");
-
-    let (room, mut rx) = Room::connect(&url, &token, RoomOptions::default()).await.unwrap();
-    log::info!("Connected to room: {} - {}", room.name(), room.sid());
+    let (room, mut rx) = Room::connect(url, token, RoomOptions::default()).await.unwrap();
+    println!("Connected to room: {} - {}", room.name(), room.sid());
 
     while let Some(msg) = rx.recv().await {
-        log::info!("Event: {:?}", msg);
+        println!("Event: {:?}", msg);
     }
 }
